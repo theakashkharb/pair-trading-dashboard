@@ -17,33 +17,33 @@ This dashboard allows traders and researchers to discover, analyze, and backtest
 
 ### Overview
 
-![Overview](asset/overview.png)
+![Overview](assets/overview.png)
 
 ### Correlation Analysis
 
-![Correlation](asset/correlation.png)
+![Correlation](assets/correlation.png)
 
 ### Top Correlated Pairs
 
-![Top Correlation](asset/top_correlation.png)
+![Top Correlation](assets/top_correlation.png)
 
 ### Cointegration Testing
 
-![Cointegration](asset/cointegrated_pairs.png)
+![Cointegration](assets/cointegrated_pairs.png)
 
 ### Spread Analysis
 
-![Spread](asset/spread_analysis.png)
+![Spread](assets/spread_analysis.png)
 
 ### Spread Visualization
 
-![Spread](asset/spread.png)
+![Spread](assets/spread.png)
 
 ### Backtesting & Position History
 
-![Backtest](asset/backtest.png)
+![Backtest](assets/backtest.png)
 
-![Position History](asset/position_history.png)
+![Position History](assets/position_history.png)
 
 ---
 
