@@ -23,15 +23,16 @@ with streamlit_analytics.track():
 
     st.markdown(
         """
-        <style>
-            section[data-testid="stSidebar"] {
-                min-width: 350px !important;
-                max-width: 350px !important;
-            }
-        </style>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-KCVYXZKF0F"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-KCVYXZKF0F');
+        </script>
         """,
-        unsafe_allow_html=True
-    )
+        unsafe_allow_html=True,)
 
 
     # =========================
