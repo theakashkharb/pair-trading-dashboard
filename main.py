@@ -36,25 +36,19 @@ st.markdown(
 
 st.sidebar.title("Select Asset")
 
-data = pd.read_csv(
-    "/Users/akash/PycharmProjects/pair-trading-dashboard/Stocks.csv"
-)
+data = pd.read_csv("Stocks.csv")
 
 data.columns = data.columns.str.strip()
 
 data = data.rename(
-    columns={
-        "Symbol": "ticker"
-    }
-)
+    columns={"Symbol": "ticker"})
 
 # Create unique display names
 data["display_name"] = (
     data["ticker"]
     + " ("
     + data["Country"]
-    + ")"
-)
+    + ")")
 
 # -------------------------
 # Country Filter
@@ -62,59 +56,46 @@ data["display_name"] = (
 
 with st.sidebar.expander(
     "Data Selection",
-    expanded=True
-):
+    expanded=True):
 
     countries = sorted(
-        data["Country"].dropna().unique()
-    )
+        data["Country"].dropna().unique())
 
     selected_countries = st.multiselect(
         "Country",
-        countries
-    )
+        countries)
 
     filtered_data = data.copy()
 
     if selected_countries:
         filtered_data = filtered_data[
             filtered_data["Country"].isin(
-                selected_countries
-            )
-        ]
+                selected_countries)]
 
     sectors = sorted(
-        filtered_data["Sector"].dropna().unique()
-    )
+        filtered_data["Sector"].dropna().unique())
 
     selected_sectors = st.multiselect(
         "Sector",
-        sectors
-    )
+        sectors)
 
     if selected_sectors:
         filtered_data = filtered_data[
             filtered_data["Sector"].isin(
-                selected_sectors
-            )
-        ]
+                selected_sectors)]
 
     stocks = sorted(
-        filtered_data["display_name"].tolist()
-    )
+        filtered_data["display_name"].tolist())
 
     selected_stocks = st.multiselect(
         "Select Stocks",
-        stocks
-    )
+        stocks)
 
     st.write(
-        f"{len(stocks)} stocks available"
-    )
+        f"{len(stocks)} stocks available")
 
     start_date = st.date_input(
-        "Start Date"
-    )
+        "Start Date")
 
     end_date = st.date_input("End Date")
 
@@ -128,53 +109,41 @@ with st.sidebar.expander(
 if download_btn:
 
     if len(selected_stocks) < 2:
-        st.error(
-            "Please select at least two stocks"
-        )
+        st.error("Please select at least two stocks")
         st.stop()
 
     filtered = data[
         data["display_name"].isin(
-            selected_stocks
-        )
-    ]
+            selected_stocks)]
 
     yf_tickers = filtered[
-        "yf_ticker"
-    ].tolist()
+        "yf_ticker"].tolist()
 
     with st.spinner(
-        "Downloading Data..."
-    ):
+        "Downloading Data..."):
 
         prices = download_prices(
             yf_tickers,
             start_date,
-            end_date
-        )
+            end_date)
 
     mapping = dict(
         zip(
             filtered["yf_ticker"],
-            filtered["display_name"]
-        )
-    )
+            filtered["display_name"]))
 
     prices = prices.rename(
-        columns=mapping
-    )
+        columns=mapping)
 
     # Optional: safer than dropna()
     prices = prices.ffill()
     prices = prices.dropna(
         axis=1,
-        how="all"
-    )
+        how="all")
 
     if prices.empty:
         st.error(
-            "No data found"
-        )
+            "No data found")
         st.stop()
 
     prices.index = prices.index.date
@@ -182,8 +151,7 @@ if download_btn:
     returns = (
         prices
         .pct_change()
-        .dropna()
-    )
+        .dropna())
 
     st.session_state["prices"] = prices
     st.session_state["returns"] = returns
@@ -206,9 +174,7 @@ if download_btn:
         "Cointegration",
         "Spread",
         "Z-Score",
-        "Backtest",
-    ]
-)
+        "Backtest",])
 
 with overview_tab:
     show_overview()

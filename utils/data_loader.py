@@ -5,7 +5,7 @@ import datetime as dt
 
 def load_stock_list():
 
-    stocks = pd.read_csv("/Users/akash/PycharmProjects/pair-trading-dashboard/Stocks.csv")
+    stocks = pd.read_csv("Stocks.csv")
 
     return stocks
 
