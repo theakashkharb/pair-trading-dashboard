@@ -1,9 +1,5 @@
 __pycache__/
 *.pyc
-.venv/
-venv/
 .idea/
 .DS_Store
-.streamlit/secrets.toml
-__pycache__/
-*.pyc
+.ipynb_checkpoints/
