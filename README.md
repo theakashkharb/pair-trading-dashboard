@@ -5,6 +5,47 @@ A Statistical Arbitrage Research Platform built with Python and Streamlit.
 This dashboard allows traders and researchers to discover, analyze, and backtest mean-reverting stock pairs using correlation, cointegration, spread analysis, and z-score based trading signals.
 
 ---
+# Pair Trading Dashboard
+
+A Statistical Arbitrage Research Platform built with Python and Streamlit.
+
+This dashboard allows traders and researchers to discover, analyze, and backtest mean-reverting stock pairs using correlation, cointegration, spread analysis, and z-score based trading signals.
+
+---
+
+## Dashboard Preview
+
+### Overview
+
+![Overview](asset/overview.png)
+
+### Correlation Analysis
+
+![Correlation](asset/correlation.png)
+
+### Top Correlated Pairs
+
+![Top Correlation](asset/top_correlation.png)
+
+### Cointegration Testing
+
+![Cointegration](asset/cointegrated_pairs.png)
+
+### Spread Analysis
+
+![Spread](asset/spread_analysis.png)
+
+### Spread Visualization
+
+![Spread](asset/spread.png)
+
+### Backtesting & Position History
+
+![Backtest](asset/backtest.png)
+
+![Position History](asset/position_history.png)
+
+---
 
 ## Features
 
@@ -132,7 +173,7 @@ streamlit run main.py
 
 Streamlit App:
 
-(Add your Streamlit URL here)
+https://pair-trading-dashboard.streamlit.app/
 
 ---
 
