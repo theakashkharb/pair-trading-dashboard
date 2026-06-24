@@ -6,3 +6,4 @@ statsmodels
 yfinance
 tqdm
 scikit-learn
+streamlit-analytics2

@@ -10,186 +10,190 @@ from tabs.cointegration import show_cointegration
 from tabs.spread import show_spread
 from tabs.zscore import show_zscore
 from tabs.backtest import show_backtest
+import streamlit_analytics2 as streamlit_analytics
+
+with streamlit_analytics.track():
 
 
-st.set_page_config(
-    page_title="Pair Trading Dashboard",
-    layout="wide",
-    initial_sidebar_state="expanded")
 
-st.markdown(
-    """
-    <style>
-        section[data-testid="stSidebar"] {
-            min-width: 350px !important;
-            max-width: 350px !important;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+    st.set_page_config(
+        page_title="Pair Trading Dashboard",
+        layout="wide",
+        initial_sidebar_state="expanded")
+
+    st.markdown(
+        """
+        <style>
+            section[data-testid="stSidebar"] {
+                min-width: 350px !important;
+                max-width: 350px !important;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
 
-# =========================
-# Sidebar
-# =========================
+    # =========================
+    # Sidebar
+    # =========================
 
-st.sidebar.title("Select Asset")
+    st.sidebar.title("Select Asset")
 
-data = pd.read_csv("Stocks.csv")
+    data = pd.read_csv("Stocks.csv")
 
-data.columns = data.columns.str.strip()
+    data.columns = data.columns.str.strip()
 
-data = data.rename(
-    columns={"Symbol": "ticker"})
+    data = data.rename(
+        columns={"Symbol": "ticker"})
 
-# Create unique display names
-data["display_name"] = (
-    data["ticker"]
-    + " ("
-    + data["Country"]
-    + ")")
+    # Create unique display names
+    data["display_name"] = (
+        data["ticker"]
+        + " ("
+        + data["Country"]
+        + ")")
 
-# -------------------------
-# Country Filter
-# -------------------------
+    # -------------------------
+    # Country Filter
+    # -------------------------
 
-with st.sidebar.expander(
-    "Data Selection",
-    expanded=True):
+    with st.sidebar.expander(
+        "Data Selection",
+        expanded=True):
 
-    countries = sorted(
-        data["Country"].dropna().unique())
+        countries = sorted(
+            data["Country"].dropna().unique())
 
-    selected_countries = st.multiselect(
-        "Country",
-        countries)
+        selected_countries = st.multiselect(
+            "Country",
+            countries)
 
-    filtered_data = data.copy()
+        filtered_data = data.copy()
 
-    if selected_countries:
-        filtered_data = filtered_data[
-            filtered_data["Country"].isin(
-                selected_countries)]
+        if selected_countries:
+            filtered_data = filtered_data[
+                filtered_data["Country"].isin(
+                    selected_countries)]
 
-    sectors = sorted(
-        filtered_data["Sector"].dropna().unique())
+        sectors = sorted(
+            filtered_data["Sector"].dropna().unique())
 
-    selected_sectors = st.multiselect(
-        "Sector",
-        sectors)
+        selected_sectors = st.multiselect(
+            "Sector",
+            sectors)
 
-    if selected_sectors:
-        filtered_data = filtered_data[
-            filtered_data["Sector"].isin(
-                selected_sectors)]
+        if selected_sectors:
+            filtered_data = filtered_data[
+                filtered_data["Sector"].isin(
+                    selected_sectors)]
 
-    stocks = sorted(
-        filtered_data["display_name"].tolist())
+        stocks = sorted(
+            filtered_data["display_name"].tolist())
 
-    selected_stocks = st.multiselect(
-        "Select Stocks",
-        stocks)
+        selected_stocks = st.multiselect(
+            "Select Stocks",
+            stocks)
 
-    st.write(
-        f"{len(stocks)} stocks available")
+        st.write(
+            f"{len(stocks)} stocks available")
 
-    start_date = st.date_input(
-        "Start Date")
+        start_date = st.date_input(
+            "Start Date")
 
-    end_date = st.date_input("End Date")
+        end_date = st.date_input("End Date")
 
-    download_btn = st.button(
-        "Download Data")
+        download_btn = st.button(
+            "Download Data")
 
-# =========================
-# Download Data
-# =========================
+    # =========================
+    # Download Data
+    # =========================
 
-if download_btn:
+    if download_btn:
 
-    if len(selected_stocks) < 2:
-        st.error("Please select at least two stocks")
-        st.stop()
+        if len(selected_stocks) < 2:
+            st.error("Please select at least two stocks")
+            st.stop()
 
-    filtered = data[
-        data["display_name"].isin(
-            selected_stocks)]
+        filtered = data[
+            data["display_name"].isin(
+                selected_stocks)]
 
-    yf_tickers = filtered[
-        "yf_ticker"].tolist()
+        yf_tickers = filtered[
+            "yf_ticker"].tolist()
 
-    with st.spinner(
-        "Downloading Data..."):
+        with st.spinner(
+            "Downloading Data..."):
 
-        prices = download_prices(
-            yf_tickers,
-            start_date,
-            end_date)
+            prices = download_prices(
+                yf_tickers,
+                start_date,
+                end_date)
 
-    mapping = dict(
-        zip(
-            filtered["yf_ticker"],
-            filtered["display_name"]))
+        mapping = dict(
+            zip(
+                filtered["yf_ticker"],
+                filtered["display_name"]))
 
-    prices = prices.rename(
-        columns=mapping)
+        prices = prices.rename(
+            columns=mapping)
 
-    # Optional: safer than dropna()
-    prices = prices.ffill()
-    prices = prices.dropna(
-        axis=1,
-        how="all")
+        # Optional: safer than dropna()
+        prices = prices.ffill()
+        prices = prices.dropna(
+            axis=1,
+            how="all")
 
-    if prices.empty:
-        st.error(
-            "No data found")
-        st.stop()
+        if prices.empty:
+            st.error(
+                "No data found")
+            st.stop()
 
-    prices.index = prices.index.date
+        prices.index = prices.index.date
 
-    returns = (
-        prices
-        .pct_change()
-        .dropna())
+        returns = (
+            prices
+            .pct_change()
+            .dropna())
 
-    st.session_state["prices"] = prices
-    st.session_state["returns"] = returns
+        st.session_state["prices"] = prices
+        st.session_state["returns"] = returns
 
-# =========================
-# Tabs
-# =========================
+    # =========================
+    # Tabs
+    # =========================
 
-(
-    overview_tab,
-    corr_tab,
-    cointegration_tab,
-    spread_tab,
-    z_tab,
-    backtest_tab
-) = st.tabs(
-    [
-        "Overview",
-        "Correlation",
-        "Cointegration",
-        "Spread",
-        "Z-Score",
-        "Backtest",])
+    (
+        overview_tab,
+        corr_tab,
+        cointegration_tab,
+        spread_tab,
+        z_tab,
+        backtest_tab
+    ) = st.tabs(
+        [
+            "Overview",
+            "Correlation",
+            "Cointegration",
+            "Spread",
+            "Z-Score",
+            "Backtest",])
 
-with overview_tab:
-    show_overview()
+    with overview_tab:
+        show_overview()
 
-with corr_tab:
-    show_correlation()
+    with corr_tab:
+        show_correlation()
 
-with cointegration_tab:
-    show_cointegration()
+    with cointegration_tab:
+        show_cointegration()
 
-with spread_tab:
-    show_spread()
+    with spread_tab:
+        show_spread()
 
-with z_tab:
-    show_zscore()
+    with z_tab:
+        show_zscore()
 
-with backtest_tab:
-    show_backtest()
+    with backtest_tab:
+        show_backtest()
