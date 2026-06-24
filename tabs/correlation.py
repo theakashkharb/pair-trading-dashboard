@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import plotly.graph_objects as go
 import plotly.express as px
 
 
@@ -13,33 +14,40 @@ def show_correlation():
     # Sidebar Controls
     # =========================
 
-    st.sidebar.header("Correlation Settings")
+    # =========================
+    # Sidebar Controls
+    # =========================
 
-    corr_threshold = st.sidebar.slider(
-        "Minimum Correlation",
-        min_value=0.50,
-        max_value=1.00,
-        value=0.80,
-        step=0.01
-    )
+    with st.sidebar.expander(
+            "Correlation Settings",
+            expanded=False
+    ):
 
-    top_n = st.sidebar.slider(
-        "Top N Pairs",
-        min_value=10,
-        max_value=100,
-        value=25,
-        step=5
-    )
+        corr_threshold = st.slider(
+            "Minimum Correlation",
+            min_value=0.50,
+            max_value=1.00,
+            value=0.80,
+            step=0.01
+        )
 
-    show_matrix = st.sidebar.checkbox(
-        "Show Correlation Matrix",
-        value=False
-    )
+        top_n = st.slider(
+            "Top N Pairs",
+            min_value=10,
+            max_value=100,
+            value=25,
+            step=5
+        )
 
-    show_heatmap = st.sidebar.checkbox(
-        "Show Heatmap",
-        value=False
-    )
+        show_matrix = st.checkbox(
+            "Show Correlation Matrix",
+            value=False
+        )
+
+        show_heatmap = st.checkbox(
+            "Show Heatmap",
+            value=False
+        )
 
     # =========================
     # Data
@@ -124,6 +132,25 @@ def show_correlation():
         by="Correlation",
         ascending=False
     )
+    pairs_df = pd.DataFrame(
+        pairs,
+        columns=[
+            "Stock 1",
+            "Stock 2",
+            "Correlation"
+        ]
+    )
+
+    pairs_df = pairs_df.sort_values(
+        by="Correlation",
+        ascending=False
+    )
+
+    st.session_state["top_corr_pairs"] = pairs_df.copy()
+
+    pairs_df = pairs_df[
+        pairs_df["Correlation"] >= corr_threshold
+        ]
 
     pairs_df = pairs_df[
         pairs_df["Correlation"] >= corr_threshold

@@ -1,10 +1,11 @@
 import pandas as pd
 import yfinance as yf
+import datetime as dt
 
 
 def load_stock_list():
 
-    stocks = pd.read_csv("/Users/akash/PycharmProjects/pair-trading-dashboard/fno.csv")
+    stocks = pd.read_csv("/Users/akash/PycharmProjects/pair-trading-dashboard/Stocks.csv")
 
     return stocks
 
@@ -13,6 +14,8 @@ def download_prices(
         tickers,
         start_date,
         end_date):
+
+    end_date = pd.to_datetime(end_date) + pd.Timedelta(days=1)
 
     prices = yf.download(
         tickers=tickers,
